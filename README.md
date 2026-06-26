@@ -13,6 +13,9 @@
 
 **Result**: **Prophet won decisively**, cutting forecast error to **6.88% MAPE** versus 10.70% for Holt-Winters, 14.00% for SARIMA, and 14.96% for the naive baseline — a result driven by Prophet's native handling of both weekly *and* yearly seasonality, which the other models could only partially capture.
 
+![Holdout Forecast Comparison: Actual vs. All Four Models](images/04_forecast_comparison.png)
+*Figure 1: 90-day holdout — actual sales (black) vs. all four forecasts. Prophet (red dashed) tracks the peaks and troughs the closest; the other three flatten out the spikes.*
+
 ---
 
 ## 🎯 Problem Statement
@@ -46,6 +49,12 @@
 
 **Data Challenges**: As a synthetic series, it doesn't carry real-world disruptions (stockouts, macro shocks, competitor actions). It's designed specifically to give all four models a fair, realistic pattern to forecast against — trend + weekly seasonality + annual seasonality + noise — not to represent a live business.
 
+![Daily Sales Trend: Jan 2022 - Jun 2025](images/01_daily_sales_trend.png)
+*Figure 2: The full series — steady upward trend, a repeating weekly ripple, and a sharp Nov/Dec spike each year.*
+
+![Seasonal Decomposition](images/02_seasonal_decomposition.png)
+*Figure 3: Additive decomposition (period=7) separating trend, weekly seasonality, and residual noise.*
+
 ---
 
 ## 🔧 Methodology
@@ -75,6 +84,9 @@
 #### Insight 2: Multi-Seasonality Decomposition Is the Real Differentiator
 **What**: Prophet (6.88% MAPE) outperformed every other model by a wide margin, including Holt-Winters (10.70%) which also models weekly seasonality but not yearly seasonality.
 **So What**: The performance gap isn't about "Prophet vs. SARIMA" as algorithms — it's about whether the model can represent more than one seasonal cycle at once. Any production forecasting setup for this kind of data should prioritize multi-seasonality support over a specific algorithm brand.
+
+![Prophet Component Decomposition](images/03_prophet_components.png)
+*Figure 4: Prophet's own decomposition — trend, weekly, and yearly components. The yearly panel clearly picks up the Nov/Dec peak that SARIMA (fit only at weekly resolution) couldn't see.*
 
 #### Insight 3: The SARIMA Fit Showed Convergence Issues Worth Flagging
 **What**: The selected SARIMA model produced a `ConvergenceWarning` during maximum-likelihood fitting, meaning its parameter estimates may not be fully optimal even within the AIC-selected order.
